@@ -53,7 +53,7 @@ export const creditLedger = pgTable('credit_ledger', {
 })
 
 export const deployments = pgTable('deployments', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   projectId: text('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
   status: text('status').notNull().default('pending'), // 'pending', 'success', 'failed'
   cfWorkerName: text('cf_worker_name'),

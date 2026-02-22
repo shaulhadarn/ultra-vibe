@@ -12,7 +12,7 @@ export const users = pgTable('users', {
 })
 
 export const projects = pgTable('projects', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
   description: text('description'),
@@ -24,7 +24,7 @@ export const projects = pgTable('projects', {
 })
 
 export const files = pgTable('files', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   projectId: text('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
   path: text('path').notNull(),
   name: text('name').notNull(),
@@ -35,7 +35,7 @@ export const files = pgTable('files', {
 })
 
 export const snapshots = pgTable('snapshots', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   projectId: text('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
   label: text('label').notNull(),
   description: text('description'),
@@ -44,7 +44,7 @@ export const snapshots = pgTable('snapshots', {
 })
 
 export const creditLedger = pgTable('credit_ledger', {
-  id: text('id').primaryKey(),
+  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   amount: integer('amount').notNull(),
   type: text('type').notNull(), // 'use', 'purchase', 'grant'

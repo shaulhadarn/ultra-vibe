@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid plan' }, { status: 400 })
     }
 
-    const [user] = await db.select().from(users).where(eq(users.clerkId, userId))
+    const [user] = await db.select().from(users).where(eq(users.id, userId))
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }

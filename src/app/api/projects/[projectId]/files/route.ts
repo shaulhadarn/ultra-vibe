@@ -32,9 +32,13 @@ export async function POST(
 
     const { path, content } = await req.json()
 
+    // Derive name from path (e.g. "src/app/page.tsx" -> "page.tsx")
+    const name = path.split('/').pop() || path
+
     const [file] = await db.insert(files).values({
       projectId: params.projectId,
       path,
+      name,
       content: content || '',
     }).returning()
 

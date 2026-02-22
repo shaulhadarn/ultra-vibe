@@ -1,7 +1,7 @@
 import { auth } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { db, users, projects, files, snapshots } from '@/lib/db'
-import { eq, and } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 
 export async function GET(
   req: NextRequest,
@@ -33,9 +33,9 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { message } = await req.json()
+    const { label, description } = await req.json()
 
-    // Get current files
+    // Get current files for this project
     const projectFiles = await db.select().from(files).where(eq(files.projectId, params.projectId))
 
     const fileManifest = projectFiles.map(f => ({
@@ -45,8 +45,9 @@ export async function POST(
 
     const [snapshot] = await db.insert(snapshots).values({
       projectId: params.projectId,
-      message: message || 'Snapshot',
-      fileManifest,
+      label: label || 'Snapshot',
+      description: description || null,
+      filesSnapshot: JSON.stringify(fileManifest),
     }).returning()
 
     return NextResponse.json({ snapshot }, { status: 201 })

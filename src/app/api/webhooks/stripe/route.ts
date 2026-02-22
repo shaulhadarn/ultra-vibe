@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
           await db.update(users)
             .set({
               plan,
-              creditsBalance: planDetails.credits,
+              credits: planDetails.credits,
               updatedAt: new Date(),
             })
             .where(eq(users.id, userId))

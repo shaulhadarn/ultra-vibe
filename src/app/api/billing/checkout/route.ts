@@ -38,8 +38,8 @@ export async function POST(req: NextRequest) {
         },
       ],
       mode: 'subscription',
-      success_url: \`\${process.env.NEXT_PUBLIC_APP_URL}/billing?success=true\`,
-      cancel_url: \`\${process.env.NEXT_PUBLIC_APP_URL}/billing?canceled=true\`,
+      success_url: (process.env.NEXT_PUBLIC_APP_URL || '') + '/billing?success=true',
+      cancel_url: (process.env.NEXT_PUBLIC_APP_URL || '') + '/billing?canceled=true',
       metadata: {
         userId: user.id,
         plan,

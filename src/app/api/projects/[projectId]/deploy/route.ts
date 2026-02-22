@@ -42,35 +42,26 @@ export async function POST(
       return acc
     }, {} as Record<string, string>)
 
-    const workerScript = `
-const FILES = ${JSON.stringify(filesMap, null, 2)};
-
-export default {
-  async fetch(request) {
-    const url = new URL(request.url);
-    const file = FILES[url.pathname] || FILES['/index.html'];
-
-    if (!file) {
-      return new Response('Not found', { status: 404 });
-    }
-
-    const ext = url.pathname.split('.').pop();
-    const types = {
-      html: 'text/html',
-      css: 'text/css',
-      js: 'application/javascript',
-      json: 'application/json',
-    };
-
-    return new Response(file, {
-      headers: { 'Content-Type': types[ext] || 'text/plain' },
-    });
-  }
-};
-`
+    const filesJson = JSON.stringify(filesMap, null, 2)
+    const workerScript = [
+      'const FILES = ' + filesJson + ';',
+      '',
+      'export default {',
+      '  async fetch(request) {',
+      '    const url = new URL(request.url);',
+      '    const file = FILES[url.pathname] || FILES[\'/index.html\'];',
+      '    if (!file) {',
+      '      return new Response(\'Not found\', { status: 404 });',
+      '    }',
+      '    const ext = url.pathname.split(\'.\').pop();',
+      '    const types = { html: \'text/html\', css: \'text/css\', js: \'application/javascript\', json: \'application/json\' };',
+      '    return new Response(file, { headers: { \'Content-Type\': types[ext] || \'text/plain\' } });',
+      '  }',
+      '};',
+    ].join('\n')
 
     // Deploy to Cloudflare Workers (mock for now)
-    const workerUrl = \`https://\${deployment.cfWorkerName}.\${process.env.CF_WORKERS_SUBDOMAIN}.workers.dev\`
+    const workerUrl = 'https://' + deployment.cfWorkerName + '.' + process.env.CF_WORKERS_SUBDOMAIN + '.workers.dev'
 
     // Update deployment
     await db.update(deployments)

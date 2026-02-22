@@ -51,3 +51,13 @@ export const creditLedger = pgTable('credit_ledger', {
   description: text('description').notNull(),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 })
+
+export const deployments = pgTable('deployments', {
+  id: text('id').primaryKey(),
+  projectId: text('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
+  status: text('status').notNull().default('pending'), // 'pending', 'success', 'failed'
+  cfWorkerName: text('cf_worker_name'),
+  workerUrl: text('worker_url'),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
+})
